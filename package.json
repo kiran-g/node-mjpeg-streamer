@@ -1,11 +1,14 @@
 {
-  "name": "mjpeg-streamer",
-  "version": "0.0.1",
-  "dependencies": {
-    "express": "2.5.x"
+    "name": "mjpeg-streamer",
+    "version": "0.0.1",
+    "dependencies": {
+    "pubsub-js": "*",
+    "v4l2camera":"*",
+    "jpeg":"*"
   },
   "license": "MIT",
   "engines": {
     "node": ">=0.6",
     "npm": "1.1.x"
   }
+}
