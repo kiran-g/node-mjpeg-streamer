@@ -4,7 +4,7 @@ var PubSub = require("pubsub-js");
 var util = require("util");
 var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
-//var FileOnWrite = require("file-on-write");
+
 var server = http.createServer(function(req, res) {
     //console.log(req.url);
     if (req.url === "/") {
@@ -25,10 +25,7 @@ var server = http.createServer(function(req, res) {
             'Pragma': 'no-cache'
         });
 
-        var writer = new FileOnWrite({
-            path: './video',
-            ext: '.jpg'
-        });
+
 
         PubSub.subscribe('MJPEG', function(msg, data) {
             //console.log( msg, data );
