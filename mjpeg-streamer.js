@@ -19,7 +19,7 @@ getopt = new Getopt([
 
 
 opt = getopt.parse(process.argv.slice(2));
-console.info(opt.options);
+
 var port=opt.options["port"]
 var device=opt.options["device"]
 if (typeof port == 'undefined' || port == null){
@@ -86,19 +86,49 @@ var server = http.createServer(function(req, res) {
         //console.log("Sent data"+png.length);
     }
 });
-server.listen(port);
 
-var cam = new v4l2camera.Camera("/dev/video"+device)
+server.on('error', function (e) {
+      if (e.code == 'EADDRINUSE') {
+        console.log('Address in use');
+      }
+    else if(e.code == "EACCES")
+    {
+        console.log("Illegal port"); 
+    }
+    else
+    {
+        console.log("Unknown error"); 
+    }
+    process.exit(1);
+    
+});
+
+
+server.listen(port);
+console.log("Listening at port "+port);
+
+try
+{
+    var cam = new v4l2camera.Camera("/dev/video"+device)
+}
+catch(err)
+{
+    console.log("v4l2camera error");
+    process.exit(1);
+}
+
+console.log("Opened camera device /dev/video"+device);
+
 cam.configSet({
     width: 352,
     height: 288
 });
+
 cam.start();
 
 cam.capture(function loop() {
 
     var rgb = cam.toRGB();
-    console.log("capture" + Buffer(rgb)[0]);
     PubSub.publish('MJPEG', Buffer(rgb));
 
     cam.capture(loop);
