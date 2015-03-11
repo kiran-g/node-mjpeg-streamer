@@ -5,6 +5,37 @@ var util = require("util");
 var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
 
+
+// node-getopt oneline example.
+Getopt = require('node-getopt')
+
+getopt = new Getopt([
+  ['p' , 'port=ARG'  , 'Port'],
+  ['d' , 'device=ARG'   , 'V4L2 Device number. 0 for "/dev/video0"'],
+  ['h' , 'help'                , 'display this help'],
+  ['v' , 'version'             , 'show version']
+])              // create Getopt instance
+.bindHelp()     // bind option 'help' to default action
+
+
+opt = getopt.parse(process.argv.slice(2));
+console.info(opt.options);
+var port=opt.options["port"]
+var device=opt.options["device"]
+if (typeof port == 'undefined' || port == null){
+   console.error("Port argument missing");
+   getopt.showHelp();
+    process.exit(1);
+}
+if (typeof device == 'undefined' || device == null){
+   console.error("Device argument missing");
+   getopt.showHelp();
+    process.exit(1);
+}
+
+
+
+
 var server = http.createServer(function(req, res) {
     //console.log(req.url);
     if (req.url === "/") {
@@ -26,8 +57,7 @@ var server = http.createServer(function(req, res) {
         });
 
 
-
-        PubSub.subscribe('MJPEG', function(msg, data) {
+        var subscriber_token=PubSub.subscribe('MJPEG', function(msg, data) {
             //console.log( msg, data );
             var jpeg = new Jpeg(Buffer(data), cam.width, cam.height);
             var jpeg_image_data = jpeg.encodeSync();
@@ -43,14 +73,22 @@ var server = http.createServer(function(req, res) {
             res.write("\r\n");
 
         });
+        res.on('close', function() {
+
+            console.log("Connection closed!");
+            PubSub.unsubscribe( subscriber_token);
+            res.end();
+
+        });
+
         //var png = toPng();
         //res.end(png, 'binary');
         //console.log("Sent data"+png.length);
     }
 });
-server.listen(3000);
+server.listen(port);
 
-var cam = new v4l2camera.Camera("/dev/video0")
+var cam = new v4l2camera.Camera("/dev/video"+device)
 cam.configSet({
     width: 352,
     height: 288
