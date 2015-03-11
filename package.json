@@ -4,7 +4,8 @@
     "dependencies": {
     "pubsub-js": "*",
     "v4l2camera":"*",
-    "jpeg":"*"
+    "jpeg":"*",
+    "node-getopt":"*"
   },
   "license": "MIT",
   "engines": {
