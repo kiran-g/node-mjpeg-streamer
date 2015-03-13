@@ -8,8 +8,12 @@ var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
 var version = "0.0.1";
 var appname = "mjpeg-streamer";
+var appdescr = "Mjpeg streamer with v4l2 as camera interface";
 // node-getopt oneline example.
 Getopt = require('node-getopt')
+
+
+
 
 getopt = new Getopt([
   ['p' , 'port=ARG'  , 'Port'],
@@ -21,6 +25,14 @@ getopt = new Getopt([
 
 
 opt = getopt.parse(process.argv.slice(2));
+
+getopt.setHelp(
+  "Usage: "+appname+" [OPTION]\n" +
+  "\n" +
+  "[[OPTIONS]]\n" +
+  "\n" 
+);
+
 
 var port=opt.options["port"]
 if (opt.options["version"])
