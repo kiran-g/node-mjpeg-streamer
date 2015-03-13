@@ -1,6 +1,11 @@
 # node-mjpeg-streamer
  Mjpeg streamer with v4l2 as camera interface
 
+## Installation
+
+```
+npm install mjpeg-streamer
+```
 ## Usage
 
 ```
