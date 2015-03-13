@@ -4,7 +4,7 @@
 ## Usage
 
 ```shell
-'Usage: node mjpeg-streamer
+mjpeg-streamer [OPTION]
 
   -p, --port=ARG    Port
   -d, --device=ARG  V4L2 Device number. 0 for "/dev/video0"
