@@ -14,5 +14,5 @@ mjpeg-streamer [OPTION]
 
 ## License
 
-MIT: http://mrgnrdrck.mit-license.org
+MIT
 
