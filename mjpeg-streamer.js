@@ -1,54 +1,52 @@
 #!/usr/bin/env node
 
 var http = require("http");
-//http.globalAgent.maxSockets = 1000;
 var PubSub = require("pubsub-js");
 var util = require("util");
 var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
+var Getopt = require('node-getopt')
+
 var version = "0.0.1";
 var appname = "mjpeg-streamer";
 var appdescr = "Mjpeg streamer with v4l2 as camera interface";
-// node-getopt oneline example.
-Getopt = require('node-getopt')
 
 
 
 
 getopt = new Getopt([
-  ['p' , 'port=ARG'  , 'Port'],
-  ['d' , 'device=ARG'   , 'V4L2 Device number. 0 for "/dev/video0"'],
-  ['h' , 'help'                , 'display this help'],
-  ['v' , 'version'             , 'show version']
-])              // create Getopt instance
-.bindHelp()     // bind option 'help' to default action
+        ['p', 'port=ARG', 'Port'],
+        ['d', 'device=ARG', 'V4L2 Device number. 0 for "/dev/video0"'],
+        ['h', 'help', 'display this help'],
+        ['v', 'version', 'show version']
+    ]) // create Getopt instance
+    .bindHelp() // bind option 'help' to default action
 
 
 opt = getopt.parse(process.argv.slice(2));
 
 getopt.setHelp(
-  "Usage: "+appname+" [OPTION]\n" +
-  "\n" +
-  "[[OPTIONS]]\n" +
-  "\n" 
+    "Usage: " + appname + " [OPTION]\n" +
+    "\n" +
+    "[[OPTIONS]]\n" +
+    "\n"
 );
 
 
-var port=opt.options["port"]
-if (opt.options["version"])
-{
-    console.log(appname+" "+version)
+var port = opt.options["port"]
+if (opt.options["version"]) {
+    console.log(appname + " " + version)
     process.exit(0);
 }
-var device=opt.options["device"]
-if (typeof port == 'undefined' || port == null){
-   console.error("Port argument missing");
-   getopt.showHelp();
+var device = opt.options["device"]
+if (typeof port == 'undefined' || port == null) {
+    console.error("Port argument missing");
+    getopt.showHelp();
     process.exit(1);
 }
-if (typeof device == 'undefined' || device == null){
-   console.error("Device argument missing");
-   getopt.showHelp();
+if (typeof device == 'undefined' || device == null) {
+    console.error("Device argument missing");
+    getopt.showHelp();
     process.exit(1);
 }
 
@@ -76,7 +74,7 @@ var server = http.createServer(function(req, res) {
         });
 
 
-        var subscriber_token=PubSub.subscribe('MJPEG', function(msg, data) {
+        var subscriber_token = PubSub.subscribe('MJPEG', function(msg, data) {
             //console.log( msg, data );
             var jpeg = new Jpeg(Buffer(data), cam.width, cam.height);
             var jpeg_image_data = jpeg.encodeSync();
@@ -95,7 +93,7 @@ var server = http.createServer(function(req, res) {
         res.on('close', function() {
 
             console.log("Connection closed!");
-            PubSub.unsubscribe( subscriber_token);
+            PubSub.unsubscribe(subscriber_token);
             res.end();
 
         });
@@ -106,37 +104,30 @@ var server = http.createServer(function(req, res) {
     }
 });
 
-server.on('error', function (e) {
-      if (e.code == 'EADDRINUSE') {
+server.on('error', function(e) {
+    if (e.code == 'EADDRINUSE') {
         console.log('Address in use');
-      }
-    else if(e.code == "EACCES")
-    {
-        console.log("Illegal port"); 
-    }
-    else
-    {
-        console.log("Unknown error"); 
+    } else if (e.code == "EACCES") {
+        console.log("Illegal port");
+    } else {
+        console.log("Unknown error");
     }
     process.exit(1);
-    
+
 });
 
 
 server.listen(port);
-console.log("Listening at port "+port);
+console.log("Listening at port " + port);
 
-try
-{
-    var cam = new v4l2camera.Camera("/dev/video"+device)
-}
-catch(err)
-{
+try {
+    var cam = new v4l2camera.Camera("/dev/video" + device)
+} catch (err) {
     console.log("v4l2camera error");
     process.exit(1);
 }
 
-console.log("Opened camera device /dev/video"+device);
+console.log("Opened camera device /dev/video" + device);
 
 cam.configSet({
     width: 352,
@@ -152,4 +143,3 @@ cam.capture(function loop() {
 
     cam.capture(loop);
 });
-
