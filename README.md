@@ -3,7 +3,7 @@
 
 ## Usage
 
-```shell
+```
 mjpeg-streamer [OPTION]
 
   -p, --port=ARG    Port
