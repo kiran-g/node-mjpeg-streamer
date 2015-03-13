@@ -1,11 +1,13 @@
+#!/usr/bin/env node
+
 var http = require("http");
 //http.globalAgent.maxSockets = 1000;
 var PubSub = require("pubsub-js");
 var util = require("util");
 var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
-
-
+var version = "0.0.1";
+var appname = "mjpeg-streamer";
 // node-getopt oneline example.
 Getopt = require('node-getopt')
 
@@ -21,6 +23,11 @@ getopt = new Getopt([
 opt = getopt.parse(process.argv.slice(2));
 
 var port=opt.options["port"]
+if (opt.options["version"])
+{
+    console.log(appname+" "+version)
+    process.exit(0);
+}
 var device=opt.options["device"]
 if (typeof port == 'undefined' || port == null){
    console.error("Port argument missing");
