@@ -81,7 +81,6 @@ var server = http.createServer(function(req, res) {
             //jpeg.encodeSync().pipe(writer)
             //writer.write(Buffer(jpeg_image_data))
             // console.log("Buffer(jpeg_image_data).length: "+Buffer(jpeg_image_data).length);
-            console.log("Serve " + data[0])
             res.write('--' + boundary + '\r\n')
             res.write('Content-Type: image/jpeg\r\n');
             res.write('Content-Length: ' + data.length + '\r\n');
