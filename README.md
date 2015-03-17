@@ -23,3 +23,7 @@ mjpeg-streamer [OPTION]
 
 MIT
 
+## Author
+
+Kiran G <kiran at gadgeon.com>,Gadgeon Smart Systems Pvt Ltd
+
