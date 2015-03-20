@@ -19,7 +19,8 @@ mjpeg-streamer [OPTION]
   -v, --version     show version
 ```
 
-Then access the following URL in browser:
+Then access the URL in browser like this:
+
     http://xxx.xxx.xxx.xxx:port
 
 ## License
