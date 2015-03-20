@@ -19,11 +19,18 @@ mjpeg-streamer [OPTION]
   -v, --version     show version
 ```
 
+Then access the following URL in browser:
+    http://xxx.xxx.xxx.xxx:port
+
 ## License
 
-MIT
+MIT and LGPL-3.0 dual
 
 ## Author
 
-Kiran G <kiran at gadgeon.com>,Gadgeon Smart Systems Pvt Ltd
+Kiran G <kiran at gadgeon dot com>
+
+## Copyright
+
+Gadgeon Smart Systems Pvt Ltd
 

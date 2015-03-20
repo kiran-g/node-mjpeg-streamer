@@ -1,6 +1,6 @@
 {
   "name": "mjpeg-streamer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Mjpeg streamer with v4l2 as camera interface",
   "main": "mjpeg-streamer.js",
   "dependencies": {
@@ -27,7 +27,7 @@
     "streamer"
   ],
   "author": "Kiran G <kiran@gadgeon.com>",
-  "license": "MIT",
+  "license": ["MIT","LGPL-3.0"],
   "bugs": {
     "url": "https://github.com/kiran-geon/node-mjpeg-streamer/issues"
   }
