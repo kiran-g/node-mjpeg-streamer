@@ -7,7 +7,7 @@ var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
 var Getopt = require('node-getopt')
 
-var version = "0.0.4";
+var version = "0.0.5";
 var appname = "mjpeg-streamer";
 var appdescr = "Mjpeg streamer with v4l2 as camera interface";
 
@@ -16,6 +16,8 @@ var appdescr = "Mjpeg streamer with v4l2 as camera interface";
 
 getopt = new Getopt([
         ['p', 'port=ARG', 'Port'],
+        ['w', 'width=ARG', 'Width'],
+        ['l', 'height=ARG', 'Height'],
         ['d', 'device=ARG', 'V4L2 Device number. 0 for "/dev/video0"'],
         ['h', 'help', 'display this help'],
         ['v', 'version', 'show version']
@@ -33,12 +35,15 @@ getopt.setHelp(
 );
 
 
-var port = opt.options["port"]
+
 if (opt.options["version"]) {
     console.log(appname + " " + version)
     process.exit(0);
 }
+var port = opt.options["port"]
 var device = opt.options["device"]
+var width = opt.options["width"]
+var height = opt.options["height"]
 if (typeof port == 'undefined' || port == null) {
     console.error("Port argument missing");
     getopt.showHelp();
@@ -50,8 +55,13 @@ if (typeof device == 'undefined' || device == null) {
     process.exit(1);
 }
 
+if (typeof width == 'undefined' || width == null) {
+    width=352;
+}
 
-
+if (typeof height == 'undefined' || height == null) {
+    width=288;
+}
 
 var server = http.createServer(function(req, res) {
     //console.log(req.url);
@@ -59,7 +69,7 @@ var server = http.createServer(function(req, res) {
         res.writeHead(200, {
             "content-type": "text/html;charset=utf-8",
         });
-        res.end(["<!doctype html>", "<html><head><meta charset='utf-8'/>", "</head><body>", "<img src='test.jpg' id='cam' width='352' height='288' />", "</body></html>", ].join(""));
+        res.end(["<!doctype html>", "<html><head><meta charset='utf-8'/>", "</head><body>", "<img src='test.jpg' id='cam'  />", "</body></html>", ].join(""));
         return;
     }
     if (req.url.match(/^\/.+\.jpg$/)) {
@@ -73,19 +83,16 @@ var server = http.createServer(function(req, res) {
             'Pragma': 'no-cache'
         });
 
-
+  
         var subscriber_token = PubSub.subscribe('MJPEG', function(msg, data) {
             //console.log( msg, data );
-            var jpeg = new Jpeg(Buffer(data), cam.width, cam.height);
-            var jpeg_image_data = jpeg.encodeSync();
             //jpeg.encodeSync().pipe(writer)
-            //writer.write(Buffer(jpeg_image_data))
             // console.log("Buffer(jpeg_image_data).length: "+Buffer(jpeg_image_data).length);
             res.write('--' + boundary + '\r\n')
             res.write('Content-Type: image/jpeg\r\n');
             res.write('Content-Length: ' + data.length + '\r\n');
             res.write("\r\n");
-            res.write(Buffer(jpeg_image_data), 'binary');
+            res.write(Buffer(data), 'binary');
             res.write("\r\n");
 
         });
@@ -129,8 +136,8 @@ try {
 console.log("Opened camera device /dev/video" + device);
 
 cam.configSet({
-    width: 352,
-    height: 288
+    width: width,
+    height: height
 });
 
 cam.start();
@@ -138,7 +145,11 @@ cam.start();
 cam.capture(function loop() {
 
     var rgb = cam.toRGB();
-    PubSub.publish('MJPEG', Buffer(rgb));
+    console.log("W:"+cam.width+"H:"+cam.height)
+    var jpeg = new Jpeg(Buffer(rgb), cam.width, cam.height);
+    var jpeg_image_data = jpeg.encodeSync();
+
+    PubSub.publish('MJPEG', Buffer(jpeg_image_data));
 
     cam.capture(loop);
 });
