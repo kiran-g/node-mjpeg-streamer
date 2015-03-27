@@ -7,7 +7,7 @@ var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
 var Getopt = require('node-getopt')
 
-var version = "0.0.5";
+var version = "0.0.6";
 var appname = "mjpeg-streamer";
 var appdescr = "Mjpeg streamer with v4l2 as camera interface";
 
