@@ -7,12 +7,14 @@ var v4l2camera = require("v4l2camera");
 var Jpeg = require('jpeg').Jpeg;
 var Getopt = require('node-getopt')
 
-var version = "0.0.6";
+var version = "0.0.7";
 var appname = "mjpeg-streamer";
 var appdescr = "Mjpeg streamer with v4l2 as camera interface";
 
 
 
+var default_port = 8080
+var default_device = 0
 
 getopt = new Getopt([
         ['p', 'port=ARG', 'Port'],
@@ -45,14 +47,12 @@ var device = opt.options["device"]
 var width = opt.options["width"]
 var height = opt.options["height"]
 if (typeof port == 'undefined' || port == null) {
-    console.error("Port argument missing");
-    getopt.showHelp();
-    process.exit(1);
+    console.error("Port argument missing. Assuming default port "+default_port);
+    port = default_port;
 }
-if (typeof device == 'undefined' || device == null) {
-    console.error("Device argument missing");
-    getopt.showHelp();
-    process.exit(1);
+if (typeof device == 'undefined' || device == null) {   
+    console.error("Device argument missing. Assuming default device "+default_device);
+    device = default_device;
 }
 
 if (typeof width == 'undefined' || width == null) {
@@ -124,7 +124,8 @@ server.on('error', function(e) {
 
 
 server.listen(port);
-console.log("Listening at port " + port);
+console.log("Started listening at port " + port);
+console.log("Using v4l2 device /dev/video" + device);
 
 try {
     var cam = new v4l2camera.Camera("/dev/video" + device)

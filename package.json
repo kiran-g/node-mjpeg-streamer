@@ -1,6 +1,6 @@
 {
   "name": "mjpeg-streamer",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Mjpeg streamer with v4l2 as camera interface",
   "main": "mjpeg-streamer.js",
   "dependencies": {
