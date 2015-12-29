@@ -6,9 +6,9 @@
   "dependencies": {
     "getopt": "~0.1.0",
     "node-getopt": "~0.2.3",
-    "v4l2camera": "~0.4.3",
+    "v4l2camera": "~1.0.2",
     "pubsub-js": "~1.5.2",
-    "jpeg": "~2.0.0"
+    "jpeg-asm": "^1.0.0"
   },
   "devDependencies": {},
   "scripts": {

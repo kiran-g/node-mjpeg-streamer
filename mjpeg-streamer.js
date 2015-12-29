@@ -4,7 +4,7 @@ var http = require("http");
 var PubSub = require("pubsub-js");
 var util = require("util");
 var v4l2camera = require("v4l2camera");
-var Jpeg = require('jpeg').Jpeg;
+var jpegasm = require("jpeg-asm");
 var Getopt = require('node-getopt')
 
 var version = "0.0.7";
@@ -142,15 +142,37 @@ cam.configSet({
 });
 
 cam.start();
+console.log("W:"+cam.width+"H:"+cam.height);
 
 cam.capture(function loop() {
 
     var rgb = cam.toRGB();
-    console.log("W:"+cam.width+"H:"+cam.height)
-    var jpeg = new Jpeg(Buffer(rgb), cam.width, cam.height);
-    var jpeg_image_data = jpeg.encodeSync();
 
-    PubSub.publish('MJPEG', Buffer(jpeg_image_data));
+    /* // 320x180 full red test image
+    var width = 320, height = 180;
+    var frameData = new Buffer(cam.width * cam.height * 4);
+    var i = 0;
+    while (i < frameData.length) {
+        frameData[i++] = 0xFF; // red
+        frameData[i++] = 0x00; // green
+        frameData[i++] = 0x00; // blue
+        frameData[i++] = 0xFF; // alpha - ignored in JPEGs
+    }*/
+
+    /* // RGBA convert (some JPEG encoder need it.
+    var frameData = new Buffer(cam.width * cam.height * 4);
+    var size = cam.width * cam.height;
+    for (var i = 0; i < size; i++) {
+        frameData[i * 4 + 0] = rgb[i * 3 + 0];
+        frameData[i * 4 + 1] = rgb[i * 3 + 1];
+        frameData[i * 4 + 2] = rgb[i * 3 + 2];
+        frameData[i * 4 + 3] = 255;
+    }
+    */
+
+    var encoded = jpegasm.encode(rgb, cam.width, cam.height, 80);
+    PubSub.publish('MJPEG', encoded);
 
     cam.capture(loop);
+
 });
